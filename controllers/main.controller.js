@@ -67,11 +67,11 @@ const save = async function(req, res){
 
 	return ReS(res, {message: 'Saved Key Value'});
 };
-module.exports.create = create;
+module.exports.save = save;
 
 
 // GET Example: /:key
-const getkey = async function(req, res){
+const getKey = async function(req, res){
 	const low = require('lowdb')
 	const FileSync = require('lowdb/adapters/FileSync')
 	const adapter = new FileSync('db.json')
@@ -81,8 +81,8 @@ const getkey = async function(req, res){
 
 	const bucketUrl = getBucketUrlByKey(key);
 
-	var allKeys = db.get('key-value').value();
-	var url = '';
+	let allKeys = db.get('key-value').value();
+	let url = '';
 
 	// Loop over all keys
 	allKeys.forEach(keyValuePair => {
@@ -117,7 +117,7 @@ const deleteKey = async function(req, res) {
 
 	const bucketUrl = getBucketUrlByKey(key);
 
-	var allKeys = db.get('key-value').value();
+	let allKeys = db.get('key-value').value();
 
 	const result = '';
 	let found = false;
@@ -165,11 +165,9 @@ const rangeSearch = async function(req, res) {
 
 	if (!keyStart || !keyEnd) return ReE(res, { message: 'INVALID_DATA' });
 
-	var allKeys = db.get('key-value').value();
-
+	let allKeys = db.get('key-value').value();
 
 	let keysInRange = [];
-	let found = false;
 	// Loop over all keys
 	allKeys.forEach(keyValuePair => {
 		if (keyValuePair.key >= keyStart && keyValuePair.key <= keyEnd) {

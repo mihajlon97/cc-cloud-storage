@@ -34,7 +34,7 @@ const adapter = new FileSync('db.json')
 const db = low(adapter)
 
 // Set some defaults (required if your JSON file is empty)
-db.defaults({ persons: [] }).write()
+db.defaults({ 'key-value': [] }).write()
 
 
 //This is here to handle all the uncaught promise rejections
@@ -42,7 +42,7 @@ process.on('unhandledRejection', error => {
     console.error('Uncaught Error', pe(error));
 });
 
-const port = '8888';
+const port = '6789';
 
 //Listen to port
 index.listen(port);
