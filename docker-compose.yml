@@ -1,0 +1,18 @@
+version: '3'
+services:
+  master:
+    image: mihajlon97/cc-cloud-storage
+    ports:
+      - "6789:6789"
+  bucket-1:
+    image: kristijan6/cloud-storage-node
+    ports:
+      - "8080:8080"
+  bucket-2:
+    image: kristijan6/cloud-storage-node
+    ports:
+      - "8081:8081"
+  bucket-3:
+    image: kristijan6/cloud-storage-node
+    ports:
+      - "8082:8082"
