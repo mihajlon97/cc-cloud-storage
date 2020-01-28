@@ -172,17 +172,17 @@
         <counts>
           <entry key="Dockerfile" value="6" />
           <entry key="gitignore" value="14" />
-          <entry key="js" value="2128" />
+          <entry key="js" value="2151" />
           <entry key="md" value="85" />
-          <entry key="txt" value="413" />
+          <entry key="txt" value="489" />
           <entry key="yml" value="65" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Dockerfile" value="6" />
-          <entry key="JavaScript" value="2128" />
-          <entry key="PLAIN_TEXT" value="512" />
+          <entry key="JavaScript" value="2151" />
+          <entry key="PLAIN_TEXT" value="588" />
           <entry key="YAML" value="65" />
         </counts>
       </usages-collector>
@@ -238,8 +238,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/main.controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="141" lean-forward="true" selection-start-line="141" selection-end-line="141" />
+            <state relative-caret-position="99">
+              <caret line="146" column="58" lean-forward="true" selection-start-line="146" selection-start-column="58" selection-end-line="146" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -408,7 +408,7 @@
       <workItem from="1572185329904" duration="7056000" />
       <workItem from="1572220724535" duration="2991000" />
       <workItem from="1580226843833" duration="6355000" />
-      <workItem from="1580234006145" duration="6581000" />
+      <workItem from="1580234006145" duration="6732000" />
     </task>
     <task id="LOCAL-00001" summary=" - save skeleton done&#10; - delete by key skeleton done&#10; - find by key skeleton done&#10; - docker">
       <created>1580230848769</created>
@@ -480,11 +480,18 @@
       <option name="project" value="LOCAL" />
       <updated>1580239844073</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary=" - delete fix&#10; - custom message when no key found in the bucket">
+      <created>1580241043814</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1580241043814</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55067000" />
+    <option name="totallyTimeSpent" value="55218000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
@@ -526,7 +533,8 @@
     <MESSAGE value=" - first try with bucket" />
     <MESSAGE value=" - docker-compose fix" />
     <MESSAGE value=" - adapting left queries for bucket" />
-    <option name="LAST_COMMIT_MESSAGE" value=" - adapting left queries for bucket" />
+    <MESSAGE value=" - delete fix&#10; - custom message when no key found in the bucket" />
+    <option name="LAST_COMMIT_MESSAGE" value=" - delete fix&#10; - custom message when no key found in the bucket" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/middleware/authUser.js" />
@@ -598,8 +606,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/main.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="141" lean-forward="true" selection-start-line="141" selection-end-line="141" />
+        <state relative-caret-position="99">
+          <caret line="146" column="58" lean-forward="true" selection-start-line="146" selection-start-column="58" selection-end-line="146" selection-end-column="58" />
         </state>
       </provider>
     </entry>
