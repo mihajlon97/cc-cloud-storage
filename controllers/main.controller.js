@@ -104,7 +104,7 @@ const getKey = async function(req, res){
 
 	// Fetch value from bucket and return value back
 	let [err, response] = await to(axios.get('http://' + bucketUrl + '/getWithPath?path=' + url));
-	if (err) return ReE(res, err);
+	if (err) return ReE(res, { message: 'NOT_FOUND' });
 
 	return ReS(res, {key, value: response.data.value});
 };
@@ -128,7 +128,6 @@ const deleteKey = async function(req, res) {
 
 	let allKeys = db.get('key-value').value();
 
-	const result = '';
 	let found = false;
 	// Loop over all keys
 	allKeys.forEach(keyValuePair => {
@@ -143,7 +142,7 @@ const deleteKey = async function(req, res) {
 
 	try {
 		// Delete the value from right bucket
-		let [err, response] = await to(axios.delete('http://' + bucketUrl + '/delete/' + key));
+		let [err, response] = await to(axios.get('http://' + bucketUrl + '/delete/' + key));
 		if (err) TE(err);
 
 		db.get('key-value').remove({ key: key }).write();
