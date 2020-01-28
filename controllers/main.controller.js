@@ -7,6 +7,24 @@ const buckets = [
 	"bucket:5557",
 ]
 
+var sort = function (prop, arr) {
+	prop = prop.split('.');
+	var len = prop.length;
+
+	arr.sort(function (a, b) {
+		var i = 0;
+		while( i < len ) { a = a[prop[i]]; b = b[prop[i]]; i++; }
+		if (a < b) {
+			return -1;
+		} else if (a > b) {
+			return 1;
+		} else {
+			return 0;
+		}
+	});
+	return arr;
+};
+
 // Returns values from 0 to 2
 function hashKey(key) {
 	return key.hashCode() % 3;
@@ -117,6 +135,8 @@ const deleteKey = async function(req, res) {
 
 	const bucketUrl = getBucketUrlByKey(key);
 
+	var allKeys = db.get('key-value').value();
+
 	const result = '';
 	let found = false;
 	// Loop over all keys
@@ -145,3 +165,52 @@ const deleteKey = async function(req, res) {
 	}
 };
 module.exports.deleteKey = deleteKey;
+
+
+
+/**
+ * Range key-value search
+ */
+const rangeSearch = async function(req, res) {
+
+	const low = require('lowdb')
+	const FileSync = require('lowdb/adapters/FileSync')
+	const adapter = new FileSync('db.json')
+	const db = low(adapter)
+
+	const keyStart = req.params.keyStart;
+	const keyEnd = req.params.keyEnd;
+
+	if (!keyStart || !keyEnd) return ReE(res, { message: 'INVALID_DATA' });
+
+	var allKeys = db.get('key-value').value();
+
+
+	let keysInRange = [];
+	let found = false;
+	// Loop over all keys
+	allKeys.forEach(keyValuePair => {
+		if (keyValuePair.key >= keyStart && keyValuePair.key <= keyEnd) {
+			keysInRange.push(keyValuePair.key);
+		}
+	});
+
+	let finalResponse = [];
+	asyncForEach(keysInRange => async function(key) => {
+
+		// Hash key to determine which bucket
+		const bucketUrl = getBucketUrlByKey(key);
+
+		// Fetch value from bucket and return value back
+		let [err, response] = await to(axios.get('http://' + bucketUrl + '/get/' + key));
+		if (err) return ReE(res, err);
+
+		finalResponse.push({
+			key: key,
+			value: response.data.value
+		})
+	});
+
+	return ReS(res, finalResponse);
+};
+module.exports.rangeSearch = rangeSearch;
