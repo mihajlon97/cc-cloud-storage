@@ -68,11 +68,6 @@ const save = async function(req, res){
 			key: body.key,
 			value: response.data
 		}).write();
-	} else {
-		db.get('key-value')
-			.find({ key: body.key })
-			.assign({ value: body.value })
-			.write()
 	}
 
 	return ReS(res, {message: 'Saved Key Value'});
