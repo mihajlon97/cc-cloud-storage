@@ -2,28 +2,10 @@ const { ReE, ReS, to, asyncForEach, TE }         = require('../services/UtilServ
 const axios = require('axios');
 
 const buckets = [
-	"bucket:5555",
-	"bucket:5556",
-	"bucket:5557",
-]
-
-var sort = function (prop, arr) {
-	prop = prop.split('.');
-	var len = prop.length;
-
-	arr.sort(function (a, b) {
-		var i = 0;
-		while( i < len ) { a = a[prop[i]]; b = b[prop[i]]; i++; }
-		if (a < b) {
-			return -1;
-		} else if (a > b) {
-			return 1;
-		} else {
-			return 0;
-		}
-	});
-	return arr;
-};
+	'bucket-1:8080',
+	'bucket-2:8081',
+	'bucket-3:8082',
+];
 
 // Returns values from 0 to 2
 function hashKey(key) {
@@ -39,8 +21,8 @@ function getBucketUrlByKey(key) {
  *
 	POST Body Example
 	{
-		 "key": "some_key",
-		 "value": "some value"
+		 'key': 'some_key',
+		 'value': 'some value'
 	}
  */
 const save = async function(req, res){
@@ -196,7 +178,7 @@ const rangeSearch = async function(req, res) {
 	});
 
 	let finalResponse = [];
-	asyncForEach(keysInRange => async function(key) => {
+	await asyncForEach(keysInRange, async (key) => {
 
 		// Hash key to determine which bucket
 		const bucketUrl = getBucketUrlByKey(key);
