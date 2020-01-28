@@ -1,71 +1,147 @@
-const { ReE, ReS, to, asyncForEach }         = require('../services/UtilService');
+const { ReE, ReS, to, asyncForEach, TE }         = require('../services/UtilService');
 const axios = require('axios');
 
-/** POST Body Example
+const buckets = [
+	"bucket:5555",
+	"bucket:5556",
+	"bucket:5557",
+]
+
+// Returns values from 0 to 2
+function hashKey(key) {
+	return key.hashCode() % 3;
+}
+
+function getBucketUrlByKey(key) {
+	return buckets[hashKey(key)];
+}
+
+/**
+ * Save new key-value pair
+ *
+	POST Body Example
 	{
-		 "persons":[
-			 {
-			 "age":"8-12",
-			 "gender":"male",
-			 "timestamp":"2010-10-14T11:19:18.039111Z",
-			 "section":"1",
-			 "event":"exit"
-			 }
-		 ],
-		 "extra-info": "" (optional)
+		 "key": "some_key",
+		 "value": "some value"
 	}
  */
-const create = async function(req, res){
+const save = async function(req, res){
 	const low = require('lowdb')
 	const FileSync = require('lowdb/adapters/FileSync')
 	const adapter = new FileSync('db.json')
 	const db = low(adapter)
 
 	const body = req.body;
-	if (!body.persons) return ReE(res, { message: 'INVALID_DATA' });
-	body.persons.forEach(person => {
-		// Flag departed true/false depending if
-		person.departed = person.event === 'exit';
-		db.get('persons').push(person).write();
+	if (!body.key || !body.value) return ReE(res, { message: 'INVALID_DATA' });
+
+	// Hash key to determine which bucket
+	const bucketUrl = getBucketUrlByKey(key);
+
+	// POST to that bucket
+	let [err, response] = await to(axios.post('http://' + bucketUrl + '/save/', { key: body.key, value: body.value }));
+	if (err) return ReE(res, err);
+
+	let found = false;
+	// Loop over all keys
+	allKeys.forEach(keyValuePair => {
+		if (keyValuePair.key === key) {
+			console.log('KEY FOUND ' + key);
+			url = keyValuePair.value;
+			found = true;
+		}
 	});
 
-	return ReS(res, {message: 'Created Person'});
+	// If the key doesn't exist insert new one
+	// else update current value
+	if (!found) {
+		db.get('key-value').push({
+			key: body.key,
+			value: 'url of value'
+		}).write();
+	} else {
+		db.get('key-value')
+			.find({ key: body.key })
+			.assign({ value: body.value })
+			.write()
+	}
+
+	return ReS(res, {message: 'Saved Key Value'});
 };
 module.exports.create = create;
 
 
-// GET Example: /persons?from={from}&to={to}&aggregate=count&departed=false
-const get = async function(req, res){
+// GET Example: /:key
+const getkey = async function(req, res){
+	const low = require('lowdb')
+	const FileSync = require('lowdb/adapters/FileSync')
+	const adapter = new FileSync('db.json')
+	const db = low(adapter)
+	const key = req.params.key;
+	if (!key) return ReE(res, { message: 'INVALID_DATA' });
+
+	const bucketUrl = getBucketUrlByKey(key);
+
+	var allKeys = db.get('key-value').value();
+	var url = '';
+
+	// Loop over all keys
+	allKeys.forEach(keyValuePair => {
+		if (keyValuePair.key === key) {
+			console.log('KEY FOUND ' + key);
+			url = keyValuePair.value;
+		}
+	});
+
+	const result = '';
+	// Fetch value from bucket and return value back
+	let [err, response] = await to(axios.get('http://' + bucketUrl + '/get/'));
+	if (err) return ReE(res, err);
+
+	return ReS(res, {key, value: result});
+};
+module.exports.getKey = getKey;
+
+
+/**
+ * Delete key-value pair by providing key parameter
+ */
+const deleteKey = async function(req, res) {
+
 	const low = require('lowdb')
 	const FileSync = require('lowdb/adapters/FileSync')
 	const adapter = new FileSync('db.json')
 	const db = low(adapter)
 
-	var persons = db.get('persons').value();
-	var result = [];
+	const key = req.params.key;
+	if (!key) return ReE(res, { message: 'INVALID_DATA' });
 
+	const bucketUrl = getBucketUrlByKey(key);
 
-	persons.forEach(person => {
-
-		if (
-			// Time filter
-			(req.query.from === undefined || req.query.from && new Date(req.query.from) <= new Date(person.timestamp)) &&
-			(req.query.to === undefined || req.query.to && new Date(req.query.to) >= new Date(person.timestamp)) &&
-
-			// Filter Departed
-			(
-				req.query.departed === undefined ||
-				(req.query.departed === 'false' && person.event === 'entry') ||
-				(req.query.departed === 'true' && person.event === 'exit')
-			)
-		) {
-			result.push(person);
+	const result = '';
+	let found = false;
+	// Loop over all keys
+	allKeys.forEach(keyValuePair => {
+		if (keyValuePair.key === key) {
+			console.log('KEY FOUND ' + key);
+			url = keyValuePair.value;
+			found = true;
 		}
 	});
 
-	// Aggregate response
-	if (req.query.aggregate === 'count') result = result.length;
+	// If no such key return error
+	if (!found) return ReE(res, { message: 'NO_KEY' });
 
-	return ReS(res, {persons: result});
+	try {
+		// Delete the value from right bucket
+		let [err, response] = await to(axios.delete('http://' + bucketUrl + '/delete/'));
+		if (err) TE(err);
+
+		db.get('key-value').remove({ key: key }).write();
+
+		return ReS(res, {message: 'Successfully deleted'});
+
+	} catch (e) {
+		return ReE(res, { message: 'ERROR_DELETE' });
+	}
 };
-module.exports.get = get;
+module.exports.deleteKey = deleteKey;

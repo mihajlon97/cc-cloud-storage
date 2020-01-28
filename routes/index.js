@@ -4,8 +4,9 @@ module.exports = function (express) {
 	const router = express.Router();
 
 	// ----------- Routes -------------
-	router.post('/persons',           MainController.create);
-	router.get('/persons',            MainController.get);
+	router.post('/save',           MainController.save);
+	router.get('/:key',            MainController.getKey);
+	router.delete('/:key',         MainController.deleteKey);
 
 	return router;
 };
