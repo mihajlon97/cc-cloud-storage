@@ -7,12 +7,12 @@ services:
   bucket-1:
     image: kristijan6/cloud-storage-node
     ports:
-      - "8080:8080"
+      - "8080:12345"
   bucket-2:
     image: kristijan6/cloud-storage-node
     ports:
-      - "8081:8081"
+      - "8081:12345"
   bucket-3:
     image: kristijan6/cloud-storage-node
     ports:
-      - "8082:8082"
+      - "8082:12345"

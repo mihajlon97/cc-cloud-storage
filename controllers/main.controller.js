@@ -2,9 +2,9 @@ const { ReE, ReS, to, asyncForEach, TE }         = require('../services/UtilServ
 const axios = require('axios');
 
 const buckets = [
-	'bucket-1:8080',
-	'bucket-2:8081',
-	'bucket-3:8082',
+	'bucket-1:12345',
+	'bucket-2:12345',
+	'bucket-3:12345',
 ];
 
 function hashCode () {
@@ -38,7 +38,7 @@ const save = async function(req, res){
 	const db = low(adapter)
 
 	const body = req.body;
-	console.log("BODY", body);
+	console.log("BODY", body, "KEY: " + body.key, "VALUE: " + body.value);
 
 	if (!body.key || !body.value) return ReE(res, { message: 'INVALID_DATA' });
 
