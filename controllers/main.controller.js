@@ -97,17 +97,16 @@ const getKey = async function(req, res){
 	// Loop over all keys
 	allKeys.forEach(keyValuePair => {
 		if (keyValuePair.key === key) {
-			console.log('KEY FOUND ' + key);
 			url = keyValuePair.value;
+			console.log('KEY FOUND ' + key, 'VALUE IS ' + url);
 		}
 	});
 
-	const result = '';
 	// Fetch value from bucket and return value back
-	let [err, response] = await to(axios.get('http://' + bucketUrl + '/get/'));
+	let [err, response] = await to(axios.get('http://' + bucketUrl + '/getWithPath?path=' + url));
 	if (err) return ReE(res, err);
 
-	return ReS(res, {key, value: result});
+	return ReS(res, {key, value: response.data.value});
 };
 module.exports.getKey = getKey;
 
@@ -135,7 +134,6 @@ const deleteKey = async function(req, res) {
 	allKeys.forEach(keyValuePair => {
 		if (keyValuePair.key === key) {
 			console.log('KEY FOUND ' + key);
-			url = keyValuePair.value;
 			found = true;
 		}
 	});
@@ -145,7 +143,7 @@ const deleteKey = async function(req, res) {
 
 	try {
 		// Delete the value from right bucket
-		let [err, response] = await to(axios.delete('http://' + bucketUrl + '/delete/'));
+		let [err, response] = await to(axios.delete('http://' + bucketUrl + '/delete/' + key));
 		if (err) TE(err);
 
 		db.get('key-value').remove({ key: key }).write();
