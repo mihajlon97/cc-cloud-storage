@@ -1,0 +1,24 @@
+1. POST localhost:8080/put
+{
+"key": "Kristijan",
+"value": "Hello, World"
+}
+-- response path to the file, used for that optimization we have, third request is when u should use it
+
+
+2. GET localhost:8080/get/Kristijan (or some other key)
+-- response is the same key-value DTO as in body of the previous request
+
+3. GET localhost:8080/getWithPath?path=./storage/-1028584124
+-- this path is the response of the POST request 
+-- response is again key-value DTO
+
+
+4. GET localhost:8080/delete/Kristijan
+-- to delete entry
+
+5. GET localhost:8080/recreateStorage
+-- to recreate everything, thus deleting all files inside
+
+
+
