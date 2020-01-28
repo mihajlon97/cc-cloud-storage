@@ -7,13 +7,19 @@ const buckets = [
 	'bucket-3:8082',
 ];
 
-// Returns values from 0 to 2
-function hashKey(key) {
-	return key.hashCode() % 3;
+function hashCode () {
+	let hash = 0, i, chr;
+	if (this.length === 0) return hash;
+	for (i = 0; i < this.length; i++) {
+		chr   = this.charCodeAt(i);
+		hash  = ((hash << 5) - hash) + chr;
+		hash |= 0; // Convert to 32bit integer
+	}
+	return hash;
 }
 
 function getBucketUrlByKey(key) {
-	return buckets[hashKey(key)];
+	return buckets[hashCode(key) % 3];
 }
 
 /**
@@ -32,21 +38,25 @@ const save = async function(req, res){
 	const db = low(adapter)
 
 	const body = req.body;
+	console.log("BODY", body);
+
 	if (!body.key || !body.value) return ReE(res, { message: 'INVALID_DATA' });
 
 	// Hash key to determine which bucket
-	const bucketUrl = getBucketUrlByKey(key);
+	const bucketUrl = getBucketUrlByKey(body.key);
 
 	// POST to that bucket
-	let [err, response] = await to(axios.post('http://' + bucketUrl + '/save/', { key: body.key, value: body.value }));
+	let [err, response] = await to(axios.post('http://' + bucketUrl + '/put', { key: body.key, value: body.value }));
 	if (err) return ReE(res, err);
+
+	console.log('NODE RESPONSE', response.data);
+
+	let allKeys = db.get('key-value').value();
 
 	let found = false;
 	// Loop over all keys
 	allKeys.forEach(keyValuePair => {
-		if (keyValuePair.key === key) {
-			console.log('KEY FOUND ' + key);
-			url = keyValuePair.value;
+		if (keyValuePair.key === body.key) {
 			found = true;
 		}
 	});
@@ -56,7 +66,7 @@ const save = async function(req, res){
 	if (!found) {
 		db.get('key-value').push({
 			key: body.key,
-			value: 'url of value'
+			value: response.data
 		}).write();
 	} else {
 		db.get('key-value')
